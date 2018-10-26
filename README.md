@@ -8,3 +8,8 @@ For now, only works for Zippyshare.
 - Run the script ```build.sh``` (Linux) or ```build.bat``` (Windows).
 - Execute the jar file: ```java -jar BatchDownload.jar <file_input> <output_path>```.
 
+# Tips
+
+Wanna grab a bunch of links from a page? Try using curl:
+```curl <PAGE> | grep -P 'zippyshare.com' | grep -oP 'href="\K[^"]+'```
+
