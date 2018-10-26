@@ -11,5 +11,5 @@ For now, only works for Zippyshare.
 # Tips
 
 Wanna grab a bunch of links from a page? Try using curl:
-```curl <PAGE> | grep -P 'zippyshare.com' | grep -oP 'href="\K[^"]+'```
+```curl <PAGE> | grep -P 'zippyshare.com' | grep -oP 'href="\K[^"]+' > download.txt```
 
