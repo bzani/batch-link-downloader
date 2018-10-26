@@ -56,7 +56,7 @@ public class BatchDownload {
 		return dlinks;
 	}
 
-	private static List<String> getLinksFromFile(String filename) {
+	private static List<String> getLinksFromFile(String filename) throws Exception {
 		final List<String> lines = new ArrayList<>();
 		try {
 		    String filePath = new File(filename).getAbsolutePath();
@@ -68,7 +68,8 @@ public class BatchDownload {
 			}
 			br.close();
 		} catch (IOException e) {
-			System.out.println("\t**Error reading input file. "+e);
+			System.out.println("\t**Error reading input file.");
+			throw new Exception(e.getMessage());
 		}
 		return lines;
 	}
@@ -117,7 +118,14 @@ final class MultiThreadDownloader {
 		public void run() {
 			try {
 				final BufferedInputStream in = new BufferedInputStream(this.url.openStream());
+				
+			    // create output path, if not created yet, and then the file
+				final String filePath = new File(this.filename).getAbsolutePath();
+				File file = new File(filePath);
+				file.getParentFile().mkdirs();
 				final FileOutputStream fileOutputStream = new FileOutputStream(this.filename);
+				
+				// download it
 				final byte dataBuffer[] = new byte[1024];
 				int bytesRead;
 				System.out.println("Downloading from link: " + url);
@@ -135,17 +143,19 @@ final class MultiThreadDownloader {
 
 	public void go(final List<String> downloads, final String downloadPath) {
 		BlockingQueue<Runnable> runnables = new ArrayBlockingQueue<Runnable>(1024);
-		ThreadPoolExecutor executor = new ThreadPoolExecutor(8, 16, 60, TimeUnit.SECONDS, runnables);
+		ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, runnables);
 
 		try {
 			for (String d : downloads) {
-				String filename = downloadPath + d.substring(d.lastIndexOf("/") + 1);
+				String bar = downloadPath.substring(downloadPath.length()-1);
+				final String filepath = (bar.equals("/") || bar.equals("\\")) ? downloadPath : downloadPath+"/";
+				String filename = filepath + d.substring(d.lastIndexOf("/") + 1);
 				executor.submit(new Downloader(new URL(d), filename));
 			}
 		} catch (MalformedURLException e) {
 			System.out.println("\t**Error parsing download urls.");
 		}
-
+		
 		executor.shutdown();
 	}
 

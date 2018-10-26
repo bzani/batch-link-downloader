@@ -6,5 +6,5 @@ For now, only works for Zippyshare.
 # Usage
 
 - Run the script ```build.sh``` (Linux) or ```build.bat``` (Windows).
-- Execute the jar file, as described by the script output: ```BatchDownload.jar <file_input> <output_path>```.
+- Execute the jar file: ```java -jar BatchDownload <file_input> <output_path>```.
 
