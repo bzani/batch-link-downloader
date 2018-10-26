@@ -5,6 +5,6 @@ For now, only works for Zippyshare.
 
 # Usage
 
-- Compile it with: ```javac BatchDownload.java```.
-- Run it with: ```java BatchDownload <FILE_INPUT> <PATH_OUTPUT>``` or simply download and run this [jar](http://not.yet).
+- Run the script ```build.sh``` (Linux) or ```build.bat``` (Windows).
+- Execute the jar file, as described by the script output: ```BatchDownload.jar <file_input> <output_path>```.
 

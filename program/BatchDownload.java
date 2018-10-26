@@ -25,7 +25,7 @@ public class BatchDownload {
 	public static void main(String[] args) throws Exception {
 
 		if (args.length != 2) {
-			System.out.println("Usage: java BatchDownload <FILE_INPUT> <OUTPUT_PATH>.");
+			System.out.println("Usage: java BatchDownload <FILE_INPUT> <OUTPUT_PATH>\n");
 			throw new Exception("Args error.");
 		}
 		
@@ -59,7 +59,8 @@ public class BatchDownload {
 	private static List<String> getLinksFromFile(String filename) {
 		final List<String> lines = new ArrayList<>();
 		try {
-			File file = new File(filename);
+		    String filePath = new File(filename).getAbsolutePath();
+			File file = new File(filePath);
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String st;
 			while ((st = br.readLine()) != null) {
@@ -67,7 +68,7 @@ public class BatchDownload {
 			}
 			br.close();
 		} catch (IOException e) {
-			System.out.println("\t**Error reading input file.");
+			System.out.println("\t**Error reading input file. "+e);
 		}
 		return lines;
 	}
@@ -88,7 +89,7 @@ public class BatchDownload {
 			ScriptEngine engine = mgr.getEngineByName("JavaScript");
 			return prefix + ((String) engine.eval(part));
 		} catch (MalformedURLException e) {
-			System.out.println("\t**Error reading download url: " + link);
+			System.out.println("\t**Error reading download url: "+ link);
 		} catch (IOException e) {
 			System.out.println("\t**Error reading url content: " + link);
 		} catch (ScriptException e) {
@@ -126,7 +127,7 @@ final class MultiThreadDownloader {
 				fileOutputStream.close();
 				System.out.println("Downloaded to file: " + filename);
 			} catch (IOException e) {
-				System.out.println("\t**Error writing output file.");
+				System.out.println("\t**Error writing output file. "+e);
 			}
 
 		}
