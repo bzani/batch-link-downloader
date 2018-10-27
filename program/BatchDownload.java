@@ -41,9 +41,14 @@ public class BatchDownload {
 		final List<String> downloads = getDownloadLinks(links);
 
 		// download
-		System.out.println("Finally starting batch download...\n");
-		MultiThreadDownloader downloader = new MultiThreadDownloader();
-		downloader.go(downloads, downloadPath);
+		if (downloads.isEmpty()) {
+			System.out.println("\nNothing to do here...\n");
+		}
+		else {
+			System.out.println("\nFinally starting batch download...\n");
+			MultiThreadDownloader downloader = new MultiThreadDownloader();
+			downloader.go(downloads, downloadPath);
+		}
 	}
 
 	private static List<String> getDownloadLinks(List<String> links) {
@@ -64,7 +69,9 @@ public class BatchDownload {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String st;
 			while ((st = br.readLine()) != null) {
-				lines.add(st);
+				if (isValidUrl(st)) {
+					lines.add(st);
+				}
 			}
 			br.close();
 		} catch (IOException e) {
@@ -74,7 +81,8 @@ public class BatchDownload {
 		return lines;
 	}
 
-	private static String evaluateUrl(String link) {
+	private static String evaluateUrl(String originalUrl) {
+		final String link = getValidUrl(originalUrl);
 		try {
 			URL url = new URL(link);
 			String prefix = link.substring(0, link.indexOf("/v/"));
@@ -101,10 +109,21 @@ public class BatchDownload {
 		return null;
 	}
 
+	private static boolean isValidUrl(String st) {
+		return ( !st.trim().equals("") && (st.indexOf("http")==0) );
+	}
+
+	private static String getValidUrl(String url) {
+		return (url.substring(0, 5).equals("http:")) ? url.replaceFirst("http", "https") : url;
+	}
+
 }
 
 final class MultiThreadDownloader {
 
+	private static final int THREADS = 10;
+	private static final int KEEPALIVE = 10;
+	
 	private class Downloader implements Runnable {
 		private final URL url;
 		private final String filename;
@@ -143,7 +162,7 @@ final class MultiThreadDownloader {
 
 	public void go(final List<String> downloads, final String downloadPath) {
 		BlockingQueue<Runnable> runnables = new ArrayBlockingQueue<Runnable>(1024);
-		ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, runnables);
+		ThreadPoolExecutor executor = new ThreadPoolExecutor(THREADS, THREADS*2, KEEPALIVE, TimeUnit.MINUTES, runnables);
 
 		try {
 			for (String d : downloads) {
