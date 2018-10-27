@@ -162,6 +162,7 @@ final class MultiThreadDownloader {
 				}
 				fileOutputStream.close();
 				System.out.println("Downloaded to file: " + filename);
+			
 			} catch (IOException e) {
 				System.out.println("\t**Error writing output file. "+e);
 			}
