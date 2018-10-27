@@ -55,14 +55,16 @@ public class BatchDownload {
 		final List<String> dlinks = new ArrayList<>();
 		links.forEach(l -> {
 			String dlink = evaluateUrl(l);
-			if (dlink != null)
+			if (dlink != null) {
 				dlinks.add(dlink);
+			}
 		});
 		return dlinks;
 	}
 
 	private static List<String> getLinksFromFile(String filename) throws Exception {
 		final List<String> lines = new ArrayList<>();
+		
 		try {
 		    String filePath = new File(filename).getAbsolutePath();
 			File file = new File(filePath);
@@ -74,15 +76,18 @@ public class BatchDownload {
 				}
 			}
 			br.close();
+		
 		} catch (IOException e) {
 			System.out.println("\t**Error reading input file.");
 			throw new Exception(e.getMessage());
 		}
+		
 		return lines;
 	}
 
 	private static String evaluateUrl(String originalUrl) {
 		final String link = getValidUrl(originalUrl);
+		
 		try {
 			URL url = new URL(link);
 			String prefix = link.substring(0, link.indexOf("/v/"));
@@ -93,19 +98,23 @@ public class BatchDownload {
 			}
 			String part = body.substring(body.indexOf("/d/") - 1);
 			part = part.substring(0, part.indexOf(";"));
-
 			ScriptEngineManager mgr = new ScriptEngineManager();
 			ScriptEngine engine = mgr.getEngineByName("JavaScript");
 			return prefix + ((String) engine.eval(part));
+		
 		} catch (MalformedURLException e) {
 			System.out.println("\t**Error reading download url: "+ link);
+			
 		} catch (IOException e) {
 			System.out.println("\t**Error reading url content: " + link);
+		
 		} catch (ScriptException e) {
 			System.out.println("\t**Error evaluating download url: " + link);
+		
 		} catch (IndexOutOfBoundsException e) {
 			System.out.println("\t**Error getting download url: " + link);
 		}
+		
 		return null;
 	}
 
@@ -171,6 +180,7 @@ final class MultiThreadDownloader {
 				String filename = filepath + d.substring(d.lastIndexOf("/") + 1);
 				executor.submit(new Downloader(new URL(d), filename));
 			}
+		
 		} catch (MalformedURLException e) {
 			System.out.println("\t**Error parsing download urls.");
 		}
