@@ -1,7 +1,7 @@
 # About
 
 This simple, powerful and multi-threaded program can read from a text file and download its links via batch.
-No dependencies, no installation, no pain in the ass.
+No dependencies, no installation (just JDK), no pain in the ass.
 For now, only works for Zippyshare.
 
 # Usage
